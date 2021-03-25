@@ -1,7 +1,7 @@
+# stdln for standalone, not stdin
+
 numpy
 Pillow
 PyYAML
 cffi
 scikit-learn
-fastai
-fastbook

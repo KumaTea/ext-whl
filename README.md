@@ -10,4 +10,4 @@ Backup link: `https://cf.ext.maku.ml/whl/stable.html`
 
 ---
 
-`whl` list: [packages.txt](docker/packages.txt)
+`whl` list: [packages.txt](docker/packages-stdln.txt)

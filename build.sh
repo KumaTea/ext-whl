@@ -5,10 +5,10 @@ set -ex
 #mkdir whl || :
 
 cd docker
-docker build  -t kumatea/ext:py39 -f py39/Dockerfile .
-docker build  -t kumatea/ext:py38 -f py38/Dockerfile .
-docker build  -t kumatea/ext:py37 -f py37/Dockerfile .
-docker build  -t kumatea/ext:py36 -f py36/Dockerfile .
+docker build --pull -t kumatea/ext:py39 -f py39/Dockerfile .
+docker build --pull -t kumatea/ext:py38 -f py38/Dockerfile .
+docker build --pull -t kumatea/ext:py37 -f py37/Dockerfile .
+docker build --pull -t kumatea/ext:py36 -f py36/Dockerfile .
 
 docker image prune
 
