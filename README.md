@@ -10,4 +10,13 @@ Backup link: `https://cf.ext.maku.ml/whl/stable.html`
 
 ---
 
-`whl` list: [packages.txt](docker/packages-stdln.txt)
+For development / testing wheels, please use this index:
+**`https://ext.maku.ml/whl/dev.html`**
+
+**`pip install <package> -f https://ext.maku.ml/whl/dev.html -f https://ext.maku.ml/whl/stable.html`**
+
+---
+
+`whl` list:
+* [packages-stdln.txt](docker/packages-stdln.txt)
+* [packages-deps.txt](docker/packages-deps.txt)

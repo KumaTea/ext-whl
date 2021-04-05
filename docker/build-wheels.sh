@@ -2,7 +2,13 @@
 
 set -ex
 
-# pip config set global.index-url https://mirrors.vmatrix.org.cn/pypi/web/simple
+# deps
+
+sed -i 's@http://deb.debian.org/debian@https://mirrors.matrix.moe/debian@g' /etc/apt/sources.list
+sed -i 's@http://security.debian.org/debian-security@https://mirrors.matrix.moe/debian-security@g' /etc/apt/sources.list
+apt update
+apt install -y pkg-config libhdf5-dev
+ln -s /usr/include/locale.h /usr/include/xlocale.h || :
 
 if [ $(uname -m) = 'armv7l' ]; then
   sed -i 's/scikit-learn//g' /root/packages-stdln.txt
@@ -11,7 +17,7 @@ fi
 pip install -U -v -r /root/packages-stdln.txt -f https://ext.maku.ml/wheels.html -f https://torch.maku.ml/whl/stable.html
 
 if [ $(uname -m) = 'aarch64' ]; then
-  pip install -U -v -r /root/packages-deps.txt -f https://ext.maku.ml/wheels.html -f https://torch.maku.ml/whl/stable.html
+  pip install -U -v -r /root/packages-deps.txt -f https://ext.maku.ml/wheels.html -f https://torch.maku.ml/whl/stable.html -f https://tf.maku.ml/whl/stable.html
 fi
 
 mkdir /root/whl

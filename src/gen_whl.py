@@ -6,7 +6,19 @@ author = 'KumaTea'
 project = 'ext-whl'
 whl_dir = '../whl'
 whl_file = 'stable.html'
+dev_file = 'dev.html'
 gh_rl_api = 'https://api.github.com/repos/{author}/{project}/releases'
+
+dev_packages = {
+    'numpy': {
+        'ver': ['1.20'],
+        'py': 'cp36'
+    },
+    'h5py': {
+        'ver': ['3.2'],
+        'py': 'cp36'
+    }
+}
 
 
 def get_gh_rl(author_name, project_name):
@@ -33,7 +45,25 @@ def gen_index():
     return rl_html
 
 
+def pick_dev():
+    raw_html = gen_index()
+    packages_list = raw_html.splitlines()
+    dev_list = []
+    for package in dev_packages:
+        for item in packages_list:
+            if package in item:
+                for ver in dev_packages[package]['ver']:
+                    if ver in item and dev_packages[package]['py'] in item:
+                        dev_list.append(item)
+                        packages_list.remove(item)
+    stable_html = '\n'.join(packages_list) + '\n'
+    dev_html = '\n'.join(dev_list) + '\n'
+    return stable_html, dev_html
+
+
 if __name__ == '__main__':
-    html = gen_index()
+    stable, dev = pick_dev()
     with open(f'{whl_dir}/{whl_file}', 'w', encoding='utf-8') as html_file:
-        html_file.write(html)
+        html_file.write(stable)
+    with open(f'{whl_dir}/{dev_file}', 'w', encoding='utf-8') as html_file:
+        html_file.write(dev)
