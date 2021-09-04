@@ -61,9 +61,16 @@ def pick_dev():
     return stable_html, dev_html
 
 
-if __name__ == '__main__':
+def gen_html():
     stable, dev = pick_dev()
     with open(f'{whl_dir}/{whl_file}', 'w', encoding='utf-8') as html_file:
         html_file.write(stable)
     with open(f'{whl_dir}/{dev_file}', 'w', encoding='utf-8') as html_file:
         html_file.write(dev)
+
+
+def gen_html_cdn():
+    with open(f'{whl_dir}/{whl_file}', 'r', encoding='utf-8') as html_file:
+        html = html_file.read()
+    with open(f'{whl_dir}/stable-cn.html', 'w', encoding='utf-8') as html_file:
+        html_file.write(html.replace('https://github.com/', 'https://gh.kmtea.eu/https://github.com/'))
