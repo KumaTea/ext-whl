@@ -1,3 +1,2 @@
 fastai
 fastbook
-tensorflow

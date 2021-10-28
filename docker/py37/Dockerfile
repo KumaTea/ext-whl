@@ -2,7 +2,7 @@ FROM python:3.7
 
 RUN set -ex \
         \
-        && pip config set global.index-url https://mirrors.vmatrix.org.cn/pypi/web/simple \
+        && pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
         && python3 -m pip install -U pip setuptools wheel \
         && rm -rf /root/.cache/*
 
