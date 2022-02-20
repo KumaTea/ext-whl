@@ -48,25 +48,23 @@ def gen_index():
 def pick_dev():
     raw_html = gen_index()
     packages_list = raw_html.splitlines()
-    dev_list = []
+    # dev_list = []
     for package in dev_packages:
         for item in packages_list:
             if package in item:
                 for ver in dev_packages[package]['ver']:
                     if ver in item and dev_packages[package]['py'] in item:
-                        dev_list.append(item)
+                        # dev_list.append(item)
                         packages_list.remove(item)
     stable_html = '\n'.join(packages_list) + '\n'
-    dev_html = '\n'.join(dev_list) + '\n'
-    return stable_html, dev_html
+    # dev_html = '\n'.join(dev_list) + '\n'
+    return stable_html  # , dev_html
 
 
 def gen_html():
-    stable, dev = pick_dev()
+    stable = pick_dev()
     with open(f'{whl_dir}/{whl_file}', 'w', encoding='utf-8') as html_file:
         html_file.write(stable)
-    with open(f'{whl_dir}/{dev_file}', 'w', encoding='utf-8') as html_file:
-        html_file.write(dev)
 
 
 def gen_html_cdn():
