@@ -58,7 +58,7 @@ def pick_dev():
                         packages_list.remove(item)
     stable_html = '\n'.join(packages_list) + '\n'
     # dev_html = '\n'.join(dev_list) + '\n'
-    return stable_html  # , dev_html
+    return f'<!DOCTYPE html>\n{stable_html}'  # , dev_html
 
 
 def gen_html():
