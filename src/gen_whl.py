@@ -1,74 +1,43 @@
-import requests
-from urllib.parse import quote_plus
+from conf import *
+from tools import get_saved_hash, get_assets, check_dup
 
 
-author = 'KumaTea'
-project = 'ext-whl'
-whl_dir = '../whl'
-whl_file = 'stable.html'
-dev_file = 'dev.html'
-gh_rl_api = 'https://api.github.com/repos/{author}/{project}/releases'
+def gen_index(saved_hash: dict):
+    assets = get_assets(saved_hash)
+    check_dup(assets)
+    html = ''
 
-dev_packages = {
-    'numpy': {
-        'ver': ['1.20'],
-        'py': 'cp36'
-    },
-    'h5py': {
-        'ver': ['3.2'],
-        'py': 'cp36'
-    }
-}
+    # sort by filename
+    assets.sort(key=lambda x: x['name'].lower())
 
-
-def get_gh_rl(author_name, project_name):
-    print('Fetching GitHub releases...')
-    assets = []
-    result_raw = requests.get(gh_rl_api.format(author=author_name, project=project_name)).json()
-    for release in result_raw:
-        if release['assets']:
-            for binary in release['assets']:
-                if 'whl' in binary['name']:
-                    assets.append({
-                        'name': binary['name'],
-                        'url': binary['browser_download_url']
-                    })
-    return assets
+    for file in assets:
+        whl_index = (
+                '<a href=\"' + file['url'] + '\">' +
+                file['name'] +
+                '</a><br>\n')
+        html += whl_index
+    return ('<!DOCTYPE html>'
+            '<html><body>\n'
+            f'{html}'
+            '</body></html>')
 
 
-def gen_index():
-    rl_list = get_gh_rl(author, project)
-    rl_html = ''
-    for file in rl_list:
-        whl_index = '<a href=\"' + file['url'] + '\">' + quote_plus(file['name']) + '</a><br>\n'
-        rl_html += whl_index
-    return rl_html
-
-
-def pick_dev():
-    raw_html = gen_index()
-    packages_list = raw_html.splitlines()
-    # dev_list = []
-    for package in dev_packages:
-        for item in packages_list:
-            if package in item:
-                for ver in dev_packages[package]['ver']:
-                    if ver in item and dev_packages[package]['py'] in item:
-                        # dev_list.append(item)
-                        packages_list.remove(item)
-    stable_html = '\n'.join(packages_list) + '\n'
-    # dev_html = '\n'.join(dev_list) + '\n'
-    return f'<!DOCTYPE html>\n{stable_html}'  # , dev_html
-
-
-def gen_html():
-    stable = pick_dev()
-    with open(f'{whl_dir}/{whl_file}', 'w', encoding='utf-8') as html_file:
-        html_file.write(stable)
+def gen_html(saved_hash: dict):
+    index = gen_index(saved_hash)
+    with open(f'{WORKDIR}/whl/wheels.html', 'w', encoding='utf-8') as html_file:
+        html_file.write(index)
 
 
 def gen_html_cdn():
-    with open(f'{whl_dir}/{whl_file}', 'r', encoding='utf-8') as html_file:
+    with open(f'{WORKDIR}/whl/wheels.html', 'r', encoding='utf-8') as html_file:
         html = html_file.read()
-    with open(f'{whl_dir}/stable-cn.html', 'w', encoding='utf-8') as html_file:
+    with open(f'{WORKDIR}/whl/wheels-cdn.html', 'w', encoding='utf-8') as html_file:
         html_file.write(html.replace('https://github.com/', 'https://gh.kmtea.eu/https://github.com/'))
+
+
+if __name__ == '__main__':
+    if os.name == 'nt':
+        hash_dict = get_saved_hash()
+        gen_html(hash_dict)
+    else:
+        gen_html_cdn()
