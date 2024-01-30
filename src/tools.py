@@ -52,3 +52,21 @@ def get_assets(saved_hash: dict):
                     'url': add_sha256_to_url(binary['name'], binary['url'], saved_hash)
                 })
     return assets
+
+
+def get_assets_from_html() -> list:
+    pkgs = []
+    whl_path = f'{WORKDIR}/whl/wheels.html'
+    with open(whl_path, 'r', encoding='utf-8') as f:
+        whl_html = f.read()
+
+    for line in whl_html.split('\n'):
+        if '<a' in line:
+            a_tag_open_start = line.find('<a href="')
+            a_tag_open_end = line.find('">')
+            a_tag_close = line.find('</a>')
+            pkg_filename = line[a_tag_open_end + len('">'):a_tag_close]
+            pkg_url = line[a_tag_open_start + len('<a href="'):a_tag_open_end]
+            pkgs.append({'name': pkg_filename, 'url': pkg_url})
+
+    return pkgs

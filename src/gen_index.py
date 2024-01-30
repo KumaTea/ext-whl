@@ -3,7 +3,7 @@ import logging
 from conf import *
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
-from tools import get_assets, get_saved_hash
+from tools import get_assets, get_saved_hash, get_assets_from_html
 
 
 whl_path = f'{WORKDIR}/whl/wheels.html'
@@ -35,10 +35,9 @@ def check_official(pkg_name: str) -> bool:
         return False
 
 
-def gen_index(saved_hash: dict):
+def gen_index(assets: dict):
     pkgs = {}
 
-    assets = get_assets(saved_hash)
     for asset in assets:
         filename = asset['name']
         url = asset['url']
@@ -103,12 +102,14 @@ def gen_cdn_index():
 
 
 if __name__ == '__main__':
-    hash_dict = get_saved_hash()
-    ps = gen_index(hash_dict)
     if os.name == 'nt':
+        hash_dict = get_saved_hash()
+        wheels = get_assets(hash_dict)
+        ps = gen_index(wheels)
         if input('Check official index? ([Y]/n) ').lower() in ['', 'y']:
             from tqdm import tqdm
             for p in tqdm(ps):
                 check_official(p)
     else:
+        get_assets_from_html()
         gen_cdn_index()
