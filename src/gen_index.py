@@ -35,7 +35,7 @@ def check_official(pkg_name: str) -> bool:
         return False
 
 
-def gen_index(assets: dict):
+def gen_index(assets: list):
     pkgs = {}
 
     for asset in assets:
@@ -111,5 +111,6 @@ if __name__ == '__main__':
             for p in tqdm(ps):
                 check_official(p)
     else:
-        get_assets_from_html()
+        wheels = get_assets_from_html()
+        gen_index(wheels)
         gen_cdn_index()
