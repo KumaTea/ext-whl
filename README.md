@@ -1,22 +1,37 @@
 # ext-whl
-Extended Python wheels (whl) from the PyPI repository
+Extended Python wheels (whl)
 
-This project provides pre-built wheels of popular packages for **ARM** / **ARM64** devices,
-to save your time.
+This project provides pre-built wheels of popular packages.
 
-**`pip install <package> -f https://ext.kmtea.eu/whl/stable.html`**
+```bash
+pip install <package> --prefer-binary --extra-index-url https://ext.kmtea.eu/simple
+```
 
-Backup link: `https://cf.ext.kmtea.eu/whl/stable.html`
+The `--prefer-binary` option is to ensure that
+once the source updates, the binary will still be used.
+You may dismiss it at your will.
 
----
+An alternative way is to use the `--find-links` option,
+which is not recommended because the size of the index is large:
 
-For development / testing wheels, please use this index:
-**`https://ext.kmtea.eu/whl/dev.html`**
+```bash
+pip install <package> --prefer-binary --find-links https://ext.kmtea.eu/wheels.html
+```
 
-**`pip install <package> -f https://ext.kmtea.eu/whl/dev.html -f https://ext.kmtea.eu/whl/stable.html`**
+If you have trouble accessing GitHub Pages,
+you may try the CDN hosted by CloudFlare:
 
----
+```bash
+pip install <package> --prefer-binary --extra-index-url https://ext.kmtea.eu/cdn
+```
 
-`whl` list:
-* [packages-stdln.txt](docker/packages-stdln.txt)
-* [packages-deps.txt](docker/packages-deps.txt)
+```bash
+pip install <package> --prefer-binary --find-links https://ext.kmtea.eu/wheels-cdn.html
+```
+
+## Others
+
+This project contains wheels from:
+
+* [pypy-wheels](https://github.com/KumaTea/pypy-wheels)
+* [riscv-wheels](https://github.com/KumaTea/riscv-wheels)
