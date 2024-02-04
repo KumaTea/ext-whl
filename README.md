@@ -3,6 +3,14 @@ Extended Python wheels (whl)
 
 This project provides pre-built wheels of popular packages.
 
+### Add to pip
+
+```bash
+pip config set global.extra-index-url https://ext.kmtea.eu/cdn
+```
+
+### Temporary use
+
 ```bash
 pip install <package> --prefer-binary --extra-index-url https://ext.kmtea.eu/simple
 ```

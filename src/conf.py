@@ -6,6 +6,7 @@ PROJECTS = [
     'riscv-wheels',
     'ext-whl',
     'NextBot',
+    'pytorch-riscv64',
 ]
 
 if os.name == 'nt':
