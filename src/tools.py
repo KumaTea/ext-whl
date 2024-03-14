@@ -1,4 +1,5 @@
 import json
+import hashlib
 import logging
 from conf import *
 from tqdm import tqdm
@@ -10,6 +11,12 @@ def get_saved_hash():
         with open(file, 'r', encoding='utf-8') as json_file:
             return json.load(json_file)
     return {}
+
+
+def save_hash(saved_hash: dict):
+    saved_hash = dict(sorted(saved_hash.items(), key=lambda x: x[0].lower()))
+    with open(f'{WORKDIR}/whl/data/sha256sums.json', 'w', encoding='utf-8') as json_file:
+        json.dump(saved_hash, json_file, indent=2)
 
 
 def get_whl_sha256(name: str, saved_hash: dict):
@@ -70,3 +77,36 @@ def get_assets_from_html() -> list:
             pkgs.append({'name': pkg_filename, 'url': pkg_url})
 
     return pkgs
+
+
+def calculate_hash(file: str, algorithm: str = 'sha256') -> str:
+    with open(file, 'rb') as f:
+        hash_obj = hashlib.new(algorithm)
+        hash_obj.update(f.read())
+        return hash_obj.hexdigest()
+
+
+def get_local_whl() -> list[tuple[str, str]]:
+    """
+    Get all .whl files in LOCAL_WHL_DIR
+    :return: list of tuples (filename, path)
+    """
+    whl_files = []
+    for root, dirs, files in os.walk(LOCAL_WHL_DIR):
+        for file in files:
+            if file.endswith('.whl'):
+                whl_files.append((file, os.path.join(root, file)))
+    return whl_files
+
+
+def extend_hash_dict(saved_hash: dict, whl_files: list[tuple[str, str]]) -> dict:
+    saved_wheels = saved_hash.keys()
+    assert not any(name in saved_wheels for name, _ in whl_files)
+
+    print('Calculating hash for local wheels...')
+    for name, path in tqdm(whl_files):
+        saved_hash[name] = {
+            'sha256': calculate_hash(path),
+            'verify': False
+        }
+    return saved_hash

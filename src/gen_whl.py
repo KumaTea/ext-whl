@@ -1,8 +1,7 @@
-from conf import *
-from tools import get_saved_hash, get_assets, check_dup
+from tools import *
 
 
-def gen_index(saved_hash: dict):
+def gen_html_content(saved_hash: dict):
     assets = get_assets(saved_hash)
     check_dup(assets)
     html = ''
@@ -23,7 +22,7 @@ def gen_index(saved_hash: dict):
 
 
 def gen_html(saved_hash: dict):
-    index = gen_index(saved_hash)
+    index = gen_html_content(saved_hash)
     with open(f'{WORKDIR}/whl/wheels.html', 'w', encoding='utf-8') as html_file:
         html_file.write(index)
 
@@ -38,6 +37,9 @@ def gen_html_cdn():
 if __name__ == '__main__':
     if os.name == 'nt':
         hash_dict = get_saved_hash()
+        local_whl = get_local_whl()
+        hash_dict = extend_hash_dict(hash_dict, local_whl)
+        save_hash(hash_dict)
         gen_html(hash_dict)
     else:
         gen_html_cdn()

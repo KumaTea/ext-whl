@@ -21,7 +21,7 @@ def get_release_assets(repo: str, tag: str, author: str = AUTHOR) -> list:
     return result['assets']
 
 
-def save_release_data(repo: str, tag: str, data: dict):
+def save_release_data(repo: str, tag: str, data: list):
     with open(f'{WORKDIR}/whl/data/{repo}_{tag}.json', 'w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=2)
 
@@ -30,11 +30,11 @@ def get_all_repo_data():
     os.makedirs(f'{WORKDIR}/whl/data', exist_ok=True)
 
     for repo in PROJECTS:
-        print(f'Fetching GitHub releases for {AUTHOR}/{repo}...')
+        print(f'\nFetching GitHub releases for {AUTHOR}/{repo}...')
         tags = get_repo_release_tags(repo)
         pbar = tqdm(tags)
-        for tag in tags:
-            pbar.set_description(f'Fetching {tag}...')
+        for tag in pbar:
+            pbar.set_description(f'Fetching {tag:>8}...')
             assets = get_release_assets(repo, tag)
             save_release_data(repo, tag, assets)
 

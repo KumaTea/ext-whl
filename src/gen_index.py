@@ -105,10 +105,9 @@ if __name__ == '__main__':
     if os.name == 'nt':
         hash_dict = get_saved_hash()
         wheels = get_assets(hash_dict)
-        ps = gen_index(wheels)
         if input('Check official index? ([Y]/n) ').lower() in ['', 'y']:
             from tqdm import tqdm
-            for p in tqdm(ps):
+            for p in tqdm(gen_index(wheels)):
                 check_official(p)
     else:
         wheels = get_assets_from_html()
