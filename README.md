@@ -43,3 +43,4 @@ This project contains wheels from:
 
 * [pypy-wheels](https://github.com/KumaTea/pypy-wheels)
 * [riscv-wheels](https://github.com/KumaTea/riscv-wheels)
+* [musl-wheels](https://github.com/KumaTea/musl-wheels)

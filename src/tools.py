@@ -45,7 +45,7 @@ def check_dup(assets: list):
 
 def get_assets(saved_hash: dict):
     assets = []
-    releases = os.listdir(f'{WORKDIR}/whl/data')
+    releases = [file for file in os.listdir(f'{WORKDIR}/whl/data') if file.endswith('json')]
     if 'sha256sums.json' in releases:
         releases.remove('sha256sums.json')
 
