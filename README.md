@@ -58,4 +58,5 @@ please open an issue.
 ### manylinux
 
 `riscv64` is now supported by `manylinux`.
-Since 2024-09 on linux only `manylinux`able wheels will be provided. 
+Since 2024-09 on linux only `manylinux`able wheels will be provided.
+All previous wheels that miss the requirements will be removed.

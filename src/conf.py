@@ -10,7 +10,7 @@ PROJECTS = [
     'pytorch-riscv64',
 ]
 
-if os.name == 'nt':
+if os.path.isfile('conf.py'):
     WORKDIR = '..'
 else:
     WORKDIR = '.'
