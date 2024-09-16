@@ -39,8 +39,23 @@ pip install <package> --prefer-binary --find-links https://ext.kmtea.eu/wheels-c
 
 ## Others
 
+### Source
+
 This project contains wheels from:
 
 * [pypy-wheels](https://github.com/KumaTea/pypy-wheels)
 * [riscv-wheels](https://github.com/KumaTea/riscv-wheels)
 * [musl-wheels](https://github.com/KumaTea/musl-wheels)
+
+### Routine
+
+I currently don't have a routine to build wheels,
+instead I build them when needed.
+
+If you would like a package to be built,
+please open an issue.
+
+### manylinux
+
+`riscv64` is now supported by `manylinux`.
+Since 2024-09 on linux only `manylinux`able wheels will be provided. 
