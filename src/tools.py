@@ -101,7 +101,7 @@ def get_local_whl() -> list[tuple[str, str]]:
 
 def extend_hash_dict(saved_hash: dict, whl_files: list[tuple[str, str]]) -> dict:
     saved_wheels = saved_hash.keys()
-    assert not any(name in saved_wheels for name, _ in whl_files)
+    assert not any(name in saved_wheels for name, _ in whl_files), r'E:\Cache\whl is not empty!'
 
     print('Calculating hash for local wheels...')
     for name, path in tqdm(whl_files):
@@ -110,3 +110,16 @@ def extend_hash_dict(saved_hash: dict, whl_files: list[tuple[str, str]]) -> dict
             'verify': False
         }
     return saved_hash
+
+
+def trim_hash_dict(pkgs: list[dict], saved_hash: dict) -> dict:
+    """
+    Remove entries in saved_hash that are not in pkgs
+    """
+    new_saved_hash = {}
+    for pkg in pkgs:
+        # if pkg['name'] in saved_hash:
+        # assert
+        new_saved_hash[pkg['name']] = saved_hash[pkg['name']]
+
+    return new_saved_hash
