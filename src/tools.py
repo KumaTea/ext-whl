@@ -99,27 +99,32 @@ def get_local_whl() -> list[tuple[str, str]]:
     return whl_files
 
 
-def extend_hash_dict(saved_hash: dict, whl_files: list[tuple[str, str]]) -> dict:
-    saved_wheels = saved_hash.keys()
-    assert not any(name in saved_wheels for name, _ in whl_files), r'E:\Cache\whl is not empty!'
+def update_hash_dict(saved_hash: dict[str, dict], whl_files: list[tuple[str, str]], upl_whl: list[dict[str, str]]) -> dict:
+    # saved_wheels = saved_hash.keys()
+    # assert not any(name in saved_wheels for name, _ in whl_files), r'E:\Cache\whl is not empty!'
+
+    new_saved_hash = {}
+    for item in upl_whl:
+        name = item['name']
+        new_saved_hash[name] = {
+            'sha256': saved_hash.get(name, {}).get('sha256', ''),
+            'verify': saved_hash.get(name, {}).get('verify', False)
+        }
 
     print('Calculating hash for local wheels...')
-    for name, path in tqdm(whl_files):
-        saved_hash[name] = {
-            'sha256': calculate_hash(path),
-            'verify': False
-        }
-    return saved_hash
-
-
-def trim_hash_dict(pkgs: list[dict], saved_hash: dict) -> dict:
-    """
-    Remove entries in saved_hash that are not in pkgs
-    """
-    new_saved_hash = {}
-    for pkg in pkgs:
-        # if pkg['name'] in saved_hash:
-        # assert
-        new_saved_hash[pkg['name']] = saved_hash[pkg['name']]
+    for name, path in whl_files:
+        if name in new_saved_hash:
+            new_saved_hash[name]['sha256'] = calculate_hash(path)
+            new_saved_hash[name]['verify'] = False
 
     return new_saved_hash
+
+
+def remove_local_dup():
+    saved_hash = get_saved_hash()
+    local_whl = get_local_whl()
+
+    for name, path in local_whl:
+        if name in saved_hash:
+            input(f'{name} already exists, remove?')
+            os.remove(path)
