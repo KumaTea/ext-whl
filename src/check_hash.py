@@ -75,11 +75,12 @@ def check_remote_hash(
         url: str,
         # progress: Progress
 ):
-    cdn_url = f'https://gh.kmtea.eu/{url}'
+    # cdn_url = f'https://gh.kmtea.eu/{url}'
     # r = requests.get(cdn_url)
     # assert r.status_code == 200, f'{cdn_url} failed ({r.status_code})!'
     # sha256_digest = hashlib.sha256(r.content).hexdigest()
-    sha256_digest = hashlib.sha256(download(cdn_url)).hexdigest()
+    # sha256_digest = hashlib.sha256(download(cdn_url)).hexdigest()
+    sha256_digest = hashlib.sha256(download(url)).hexdigest()
     # sha256_digest = hashlib.sha256(download(cdn_url, progress)).hexdigest()
     return sha256_digest
 
