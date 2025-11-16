@@ -1,12 +1,12 @@
 import sys
+import hashlib
 import requests
-from tools import *
+from tqdm import tqdm
 from typing import Optional
-# from rich.progress import Progress, TaskID
+from tools import get_saved_hash, save_hash, get_assets_from_html
 
 
-saved_hash = get_saved_hash()
-saved_hash_whl = set(saved_hash.keys())
+local_saved_hash = get_saved_hash()
 pkgs = get_assets_from_html()
 pkg_urls = {pkg['name']: pkg['url'] for pkg in pkgs}
 pkg_names = set(pkg_urls.keys())
@@ -15,11 +15,12 @@ pkg_names = set(pkg_urls.keys())
 def get_pkg_hash(
         filename: str,
         pbar: tqdm,
-        # progress: Progress, task: TaskID
+        saved_hash: dict = local_saved_hash
 ) -> tuple[Optional[str], bool]:
     """
     sha256sum, verified
     """
+    saved_hash_whl = set(saved_hash.keys())
     if filename in saved_hash_whl:
         return saved_hash[filename]['sha256'], saved_hash[filename]['verify']
 
@@ -85,7 +86,7 @@ def check_remote_hash(
     return sha256_digest
 
 
-def main():
+def check(saved_hash: dict = local_saved_hash) -> dict:
     print('\nChecking sha256sum...\n')
 
     pbar = tqdm(pkg_names, file=sys.stdout)
@@ -101,7 +102,7 @@ def main():
         # progress.update(main_task, description=f'Now: {pkg[:48]:<48}')
 
         # pkg_sha256, pkg_verified = get_pkg_hash(pkg, progress, main_task)
-        pkg_sha256, pkg_verified = get_pkg_hash(pkg, pbar)
+        pkg_sha256, pkg_verified = get_pkg_hash(pkg, pbar, saved_hash)
         if pkg_verified:
             # progress.update(main_task, advance=1)
             continue
@@ -147,4 +148,4 @@ def main():
 
 
 if __name__ == '__main__':
-    save_hash(main())
+    save_hash(check())

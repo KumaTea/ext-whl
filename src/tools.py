@@ -1,4 +1,5 @@
 import json
+import shutil
 import hashlib
 import logging
 from conf import *
@@ -11,6 +12,11 @@ def get_saved_hash():
         with open(file, 'r', encoding='utf-8') as json_file:
             return json.load(json_file)
     return {}
+
+
+def backup_hashfile():
+    hashfile = f'{WORKDIR}/whl/data/sha256sums.json'
+    shutil.copyfile(hashfile, hashfile + '.bak')
 
 
 def save_hash(saved_hash: dict):

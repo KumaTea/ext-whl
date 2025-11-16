@@ -15,4 +15,4 @@ if os.path.isfile('conf.py'):
 else:
     WORKDIR = '.'
 
-LOCAL_WHL_DIR = r'E:\Cache\whl'
+LOCAL_WHL_DIR = r'Z:\Data\ext'
