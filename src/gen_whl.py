@@ -1,4 +1,6 @@
-from tools import *
+import os
+from conf import WORKDIR
+from tools import get_assets, check_dup, get_saved_hash, save_hash, get_local_whl, tqdm
 
 
 def gen_html_content(saved_hash: dict):
@@ -38,7 +40,9 @@ if __name__ == '__main__':
     if os.name == 'nt':
         hash_dict = get_saved_hash()
         local_whl = get_local_whl()
-        hash_dict = extend_hash_dict(hash_dict, local_whl)
+        # hash_dict = extend_hash_dict(hash_dict, local_whl)
+        # replaced by
+        # hash_dict = update_hash_dict(saved_hash=hash_dict, whl_files=local_whl, upl_whl=wheels)
         save_hash(hash_dict)
         gen_html(hash_dict)
     else:

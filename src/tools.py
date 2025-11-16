@@ -1,9 +1,15 @@
+import os
 import json
 import shutil
 import hashlib
 import logging
-from conf import *
-from tqdm import tqdm
+from conf import WORKDIR, LOCAL_WHL_DIR
+
+try:
+    from tqdm import tqdm
+except ImportError:
+    print('tqdm not found, fallback to normal list')
+    tqdm = lambda x: x
 
 
 def get_saved_hash():

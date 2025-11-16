@@ -1,9 +1,10 @@
+import os
 import shutil
 import logging
-from conf import *
+from conf import WORKDIR
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
-from tools import get_assets, get_saved_hash, get_assets_from_html
+from tools import get_assets, get_saved_hash, get_assets_from_html, tqdm
 
 
 whl_path = f'{WORKDIR}/whl/wheels.html'
@@ -106,7 +107,6 @@ if __name__ == '__main__':
         hash_dict = get_saved_hash()
         wheels = get_assets(hash_dict)
         if input('Check official index? ([Y]/n) ').lower() in ['', 'y']:
-            from tqdm import tqdm
             for p in tqdm(gen_index(wheels)):
                 check_official(p)
     else:
