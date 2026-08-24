@@ -12,6 +12,12 @@ except ImportError:
     tqdm = lambda x: x
 
 
+def get_data_dir():
+    data_dir = f'{WORKDIR}/whl/data'
+    os.makedirs(data_dir, exist_ok=True)
+    return data_dir
+
+
 def get_saved_hash():
     file = f'{WORKDIR}/whl/data/sha256sums.json'
     if os.path.exists(file):
@@ -20,14 +26,37 @@ def get_saved_hash():
     return {}
 
 
+def bootstrap_hash_from_html(verified: bool = True) -> dict:
+    """
+    Rebuild the hash dict from the sha256 fragments already in wheels.html.
+
+    whl/data is gitignored, so a fresh clone has no sha256sums.json. Without
+    this, update_hash_dict() would blank every hash and check_hash would then
+    re-download the whole index to earn them back.
+
+    Those fragments were written by add_sha256_to_url() from hashes an earlier
+    run had already downloaded and verified, so they are treated as verified
+    here too. Pass verified=False to force a full re-download instead.
+    """
+    saved_hash = {}
+    for pkg in get_assets_from_html():
+        url_split = pkg['url'].split('#sha256=')
+        if len(url_split) == 2:
+            saved_hash[pkg['name']] = {'sha256': url_split[1], 'verify': verified}
+    return saved_hash
+
+
 def backup_hashfile():
-    hashfile = f'{WORKDIR}/whl/data/sha256sums.json'
+    hashfile = f'{get_data_dir()}/sha256sums.json'
+    if not os.path.exists(hashfile):
+        logging.warning('No sha256sums.json to back up (first run?), skipping.')
+        return
     shutil.copyfile(hashfile, hashfile + '.bak')
 
 
 def save_hash(saved_hash: dict):
     saved_hash = dict(sorted(saved_hash.items(), key=lambda x: x[0].lower()))
-    with open(f'{WORKDIR}/whl/data/sha256sums.json', 'w', encoding='utf-8') as json_file:
+    with open(f'{get_data_dir()}/sha256sums.json', 'w', encoding='utf-8') as json_file:
         json.dump(saved_hash, json_file, indent=2)
 
 
@@ -57,7 +86,7 @@ def check_dup(assets: list):
 
 def get_assets(saved_hash: dict):
     assets = []
-    releases = [file for file in os.listdir(f'{WORKDIR}/whl/data') if file.endswith('json')]
+    releases = [file for file in os.listdir(get_data_dir()) if file.endswith('json')]
     if 'sha256sums.json' in releases:
         releases.remove('sha256sums.json')
 
@@ -103,6 +132,13 @@ def get_local_whl() -> list[tuple[str, str]]:
     Get all .whl files in LOCAL_WHL_DIR
     :return: list of tuples (filename, path)
     """
+    if not os.path.isdir(LOCAL_WHL_DIR):
+        # not fatal: any wheel missing a hash here gets one from check_hash,
+        # which downloads it from the release instead. Just don't do it silently.
+        logging.warning(f'LOCAL_WHL_DIR {LOCAL_WHL_DIR} not found; '
+                        f'hashes will be fetched from GitHub instead.')
+        return []
+
     whl_files = []
     for root, dirs, files in os.walk(LOCAL_WHL_DIR):
         for file in files:

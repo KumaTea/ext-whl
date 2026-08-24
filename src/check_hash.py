@@ -7,9 +7,21 @@ from tools import get_saved_hash, save_hash, get_assets_from_html
 
 
 local_saved_hash = get_saved_hash()
-pkgs = get_assets_from_html()
-pkg_urls = {pkg['name']: pkg['url'] for pkg in pkgs}
-pkg_names = set(pkg_urls.keys())
+
+# Loaded lazily by load_pkgs(), NOT at import time: main.py imports this module
+# before gen_html() rewrites wheels.html, so reading it here would snapshot the
+# previous index and silently skip every newly released wheel.
+pkg_urls: dict = {}
+pkg_names: set = set()
+
+
+def load_pkgs():
+    """(Re)read wheels.html. Call after gen_html() has written it."""
+    global pkg_urls, pkg_names
+    pkgs = get_assets_from_html()
+    pkg_urls = {pkg['name']: pkg['url'] for pkg in pkgs}
+    pkg_names = set(pkg_urls.keys())
+    return pkg_names
 
 
 def get_pkg_hash(
@@ -89,6 +101,10 @@ def check_remote_hash(
 def check(saved_hash: dict = local_saved_hash) -> dict:
     print('\nChecking sha256sum...\n')
 
+    load_pkgs()
+    todo = {p for p in pkg_names if not saved_hash.get(p, {}).get('verify')}
+    print(f'{len(pkg_names)} wheels in index, {len(todo)} to download and verify.\n')
+
     pbar = tqdm(pkg_names, file=sys.stdout)
     # with Progress() as progress:
     # progress = Progress()
@@ -148,4 +164,5 @@ def check(saved_hash: dict = local_saved_hash) -> dict:
 
 
 if __name__ == '__main__':
+    load_pkgs()
     save_hash(check())
